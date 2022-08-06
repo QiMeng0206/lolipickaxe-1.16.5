@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "item": "lolipickaxe:loli_diamond_addon_0"
+  },
+  "ingredients": [
+    {
+      "tag": "forge:gems/diamond"
+    }
+  ]
+}

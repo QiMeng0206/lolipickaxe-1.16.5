@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    " a ",
+    " s ",
+    "   "
+  ],
+  "key": {
+    "a": {
+      "tag": "forge:gems/emerald"
+    },
+    "s": {
+      "tag": "forge:storage_blocks/emerald"
+    }
+  },
+  "result": {
+    "item": "lolipickaxe:loli_emerald_addon_0"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "item": "lolipickaxe:loli_card"
+  },
+  "ingredients": [
+    {
+      "item": "lolipickaxe:loli_entity_soul_addon_0"
+    },
+    {
+      "item": "lolipickaxe:loli_card"
+    }
+  ]
+}

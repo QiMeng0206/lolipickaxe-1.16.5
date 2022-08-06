@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "asa",
+    "sas",
+    "asa"
+  ],
+  "key": {
+    "a": {
+      "tag": "forge:gems/lapis"
+    },
+    "s": {
+      "tag": "forge:storage_blocks/lapis"
+    }
+  },
+  "result": {
+    "item": "lolipickaxe:loli_lapis_addon_0"
+  }
+}

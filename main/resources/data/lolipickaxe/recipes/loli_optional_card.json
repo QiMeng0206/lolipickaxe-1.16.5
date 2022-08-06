@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "asa",
+    "sds",
+    "asa"
+  ],
+  "key": {
+    "a": {
+      "tag": "forge:nether_stars"
+    },
+    "s": {
+      "item": "lolipickaxe:loli_entity_soul_addon_1"
+    },
+    "d": {
+      "item": "lolipickaxe:loli_card"
+    }
+  },
+  "result": {
+    "item": "lolipickaxe:loli_optional_card"
+  }
+}
