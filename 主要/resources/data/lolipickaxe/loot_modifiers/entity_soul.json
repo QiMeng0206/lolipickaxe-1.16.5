@@ -1,8 +1,0 @@
-{
-  "type": "lolipickaxe:entity_soul",
-  "conditions": [
-    {
-      "condition": "minecraft:killed_by_player"
-    }
-  ]
-}
