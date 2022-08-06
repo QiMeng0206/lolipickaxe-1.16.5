@@ -1,0 +1,15 @@
+{
+	"lolisuccess" : {
+		"replace": true,
+		"sounds" : ["lolipickaxe:lolisuccess"]
+	},
+	"lolirecord" : {
+		"sounds" : [
+			{
+				"name": "lolipickaxe:lolirecord",
+				"stream": true,
+				"volume": 0.05
+			}
+		]
+	}
+}
