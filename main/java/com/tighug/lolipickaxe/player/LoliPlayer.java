@@ -130,16 +130,17 @@ public class LoliPlayer implements ILoliPlayer {
     private LoliPlayer(@NotNull ServerPlayerEntity player, @NotNull UUID uuid) {
         this.player = player;
         this.uuid = uuid;
-        this.init();
     }
 
     public LoliPlayer(@NotNull ServerPlayerEntity player) {
         this(player, UUID.randomUUID());
+        this.init();
     }
 
     public LoliPlayer(@NotNull ServerPlayerEntity player, @NotNull CompoundNBT nbt) {
         this(player, nbt.getUUID("uuid"));
         deserializeNBT(nbt);
+        this.init();
     }
 
     public LoliInventory getLoliInventory() {
@@ -281,7 +282,7 @@ public class LoliPlayer implements ILoliPlayer {
                 EntityDataManager entityDataManager = ((EntityDataManager) entityData.get(player));
                 Map<Integer, EntityDataManager.DataEntry<?>> map = ((Map<Integer, EntityDataManager.DataEntry<?>>) itemsById.get(entityDataManager));
                 DataParameter<Float> floatDataParameter = (DataParameter<Float>) dataHealthId.get(player);
-                map.put(floatDataParameter.getId(), new LoliEntry(floatDataParameter, player));
+                map.put(floatDataParameter.getId(), new LoliEntry(floatDataParameter));
             }
             catch (IllegalAccessException e) {
                 dataHealthId.setAccessible(false);
@@ -743,12 +744,8 @@ public class LoliPlayer implements ILoliPlayer {
     }
 
     private static class LoliEntry extends EntityDataManager.DataEntry<Float> {
-        private final Random random = new Random();
-        private final PlayerEntity player;
-
-        public LoliEntry(DataParameter<Float> p_i47010_1_, PlayerEntity player) {
-            super(p_i47010_1_, player.getMaxHealth());
-            this.player = player;
+        public LoliEntry(DataParameter<Float> p_i47010_1_) {
+            super(p_i47010_1_, Float.POSITIVE_INFINITY);
         }
 
         @Override
@@ -757,7 +754,7 @@ public class LoliPlayer implements ILoliPlayer {
 
         @Override
         public @NotNull Float getValue() {
-            return Utils.clamp((random.nextFloat() + 1) * player.getMaxHealth(), 1, Float.MAX_VALUE);
+            return Float.POSITIVE_INFINITY;
         }
 
     }
