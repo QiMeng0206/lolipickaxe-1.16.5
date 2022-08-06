@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "asa",
+    "sas",
+    "asa"
+  ],
+  "key": {
+    "a": {
+      "tag": "forge:glass"
+    },
+    "s": {
+      "tag": "forge:obsidian"
+    }
+  },
+  "result": {
+    "item": "lolipickaxe:loli_obsidian_addon_0"
+  }
+}

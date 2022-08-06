@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "item": "lolipickaxe:loli_card_album"
+  },
+  "ingredients": [
+    {
+      "item": "minecraft:book"
+    },
+    {
+      "item": "lolipickaxe:loli_entity_soul_addon_0"
+    }
+  ]
+}

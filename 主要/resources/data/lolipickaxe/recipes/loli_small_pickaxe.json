@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "asd",
+    " f ",
+    " f "
+  ],
+  "key": {
+    "a": {
+      "item": "minecraft:iron_axe"
+    },
+    "s": {
+      "item": "minecraft:iron_pickaxe"
+    },
+    "d": {
+      "item": "minecraft:iron_shovel"
+    },
+    "f": {
+      "tag": "forge:ingots/iron"
+    }
+  },
+  "result": {
+    "item": "lolipickaxe:loli_small_pickaxe"
+  }
+}

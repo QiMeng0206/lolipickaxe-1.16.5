@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "result": {
+    "item": "lolipickaxe:loli_nether_star_addon_0"
+  },
+  "ingredients": [
+    {
+      "tag": "forge:nether_stars"
+    }
+  ]
+}
