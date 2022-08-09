@@ -99,12 +99,8 @@ public class GUILoliCardAlbum extends LoliPickaxeListScreen<String>{
                 assert this.minecraft != null;
                 this.minecraft.setScreen(guiLoliCardAlbum);
             }));
-            this.addButton(new Button(10, (height - 30) / 2, 20, 20,new StringTextComponent("<"), b -> {
-                guiLoliCardAlbum.pre();
-            }));
-            this.addButton(new Button(width - 30, (height - 30) / 2, 20, 20,new StringTextComponent(">"), b -> {
-                guiLoliCardAlbum.next();
-            }));
+            this.addButton(new Button(10, (height - 30) / 2, 20, 20,new StringTextComponent("<"), b -> guiLoliCardAlbum.pre()));
+            this.addButton(new Button(width - 30, (height - 30) / 2, 20, 20,new StringTextComponent(">"), b -> guiLoliCardAlbum.next()));
             super.init();
         }
 

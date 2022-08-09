@@ -174,7 +174,7 @@ public class ItemSmallLoliPickaxe extends ItemLoliPickaxeTool {
             PlayerEntity player = (PlayerEntity) p_77663_3_;
             if (hasLevel(ItemLoliAddon.Type.EFFECT, p_77663_1_)) {
                 int i = (int) getValue(ItemLoliAddon.Type.EFFECT, p_77663_1_);
-                this.EFFECT_LIST.forEach(iEffect -> iEffect.accept(i, player));
+                this.EFFECT_LIST.forEach(iEffect -> iEffect.z(i, player));
             }
             if (p_77663_2_.getDayTime() % 30 == 0 && hasLevel(ItemLoliAddon.Type.MAYFLY, p_77663_1_) && !LoliPlayer.isLoli(player)) {
                 Lolipickaxe.LOLI_FLIGHT_EVENT.addFlyingPlayer(((StringTextComponent) player.getName()).getText());
@@ -351,6 +351,6 @@ public class ItemSmallLoliPickaxe extends ItemLoliPickaxeTool {
 
     public interface IEffect {
 
-        void accept(int i, PlayerEntity player);
+        void z(int i, PlayerEntity player);
     }
 }

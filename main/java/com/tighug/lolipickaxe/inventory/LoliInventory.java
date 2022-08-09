@@ -88,8 +88,7 @@ public class LoliInventory implements IInventory, IRecipeHelperPopulator {
         for(int i = this.size - 1; i >= 0; --i) {
             ItemStack itemstack1 = this.getItem(i);
             if (itemstack1.getItem().equals(p_223374_1_)) {
-                int j = p_223374_2_ - itemstack.getCount();
-                ItemStack itemstack2 = itemstack1.split(j);
+                ItemStack itemstack2 = itemstack1.split(p_223374_2_);
                 itemstack.grow(itemstack2.getCount());
                 if (itemstack.getCount() == p_223374_2_) {
                     break;

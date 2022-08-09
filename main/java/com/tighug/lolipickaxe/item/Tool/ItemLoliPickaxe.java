@@ -169,7 +169,7 @@ public class ItemLoliPickaxe extends ItemLoliPickaxeTool implements ILoli {
             ((ServerWorld) p_77663_2_).despawn(p_77663_3_);
         }
         else {
-            if (!hasOwner(p_77663_1_)){
+            if (!this.hasOwner(p_77663_1_)){
                 player.getCapability(LoliPlayer.loliPlayer).ifPresent(iLoliPlayer -> {
                     if (iLoliPlayer instanceof LoliPlayer){
                         LoliPlayer loliPlayer = (LoliPlayer) iLoliPlayer;
@@ -225,13 +225,13 @@ public class ItemLoliPickaxe extends ItemLoliPickaxeTool implements ILoli {
         if ((boolean) loliConfig.getValue(LoliConfig.Type.CLEAR_INVENTORY)) list.add(new TranslationTextComponent("loliPickaxe.clearInventory"));
         if ((boolean) loliConfig.getValue(LoliConfig.Type.DROP_ITEMS)) list.add(new TranslationTextComponent("loliPickaxe.dropItems"));
         if ((boolean) loliConfig.getValue(LoliConfig.Type.KICK_PLAYER) && Config.ALLOWABLE_KICK_PLAYER.get()) list.add(new TranslationTextComponent("loliPickaxe.kickPlayer"));
-        if ((boolean) loliConfig.getValue(LoliConfig.Type.IS_ATTACK_FACING)){
+        if ((boolean) loliConfig.getValue(LoliConfig.Type.IS_ATTACK_FACING)) {
             list.add(new TranslationTextComponent("loliPickaxe.killFacing").append(" " +
                     ((Number) loliConfig.getValue(LoliConfig.Type.ATTACK_FACING_RANGE)).intValue() + ", " +
                     ((Number) loliConfig.getValue(LoliConfig.Type.ATTACK_FACING_SLOPE)).doubleValue()
             ));
         }
-        if ((boolean) loliConfig.getValue(LoliConfig.Type.REMOVED_ENTITY)){
+        if ((boolean) loliConfig.getValue(LoliConfig.Type.REMOVED_ENTITY)) {
             list.add(new TranslationTextComponent("loliPickaxe.removedEntity"));
         }
         list.forEach(b -> b.withStyle(TextFormatting.GRAY));

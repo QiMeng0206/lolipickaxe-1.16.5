@@ -122,9 +122,10 @@ public class LoliConfig {
         KICK_PLAYER("kickPlayer", false),
         KICK_PLAYER_MESSAGE("kickPlayerMessage", "loliPickaxe.kickPlayer.message"),
         FLYING_SPEED("loliPickaxeFlyingSpeed", 5f, 20f),
-        REMOVED_ENTITY("removedEntity", false),
         REACH_DISTANCE("loliPickaxeReachDistance", 5, 256, 0),
+        REMOVED_ENTITY("removedEntity", false),
         IS_REMOVED("removed", false);
+
         private final String name;
         private final Serializable value;
         private final double min;

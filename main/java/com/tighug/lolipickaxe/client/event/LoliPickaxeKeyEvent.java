@@ -6,7 +6,6 @@ import com.tighug.lolipickaxe.client.gui.LoliPickaxeEnchantScreen;
 import com.tighug.lolipickaxe.client.gui.LoliPickaxePotionScreen;
 import com.tighug.lolipickaxe.client.key.KeyLoader;
 import com.tighug.lolipickaxe.item.Tool.*;
-import com.tighug.lolipickaxe.item.addon.ItemLoliAddon;
 import com.tighug.lolipickaxe.network.NetworkHandler;
 import com.tighug.lolipickaxe.util.Config;
 import com.tighug.lolipickaxe.util.ModSoundEvents;
@@ -83,7 +82,7 @@ public class LoliPickaxeKeyEvent implements Lolipickaxe.LoliEvent {
                 PlayerEntity player = minecraft.player;
                 ItemStack mainHandItem = player.getMainHandItem();
                 if (mainHandItem.getItem() instanceof ItemLoliPickaxeTool) {
-                    tick = (byte)(9 - (ItemSmallLoliPickaxe.getLevel(ItemLoliAddon.Type.ATTACK_DAMAGE, mainHandItem) + 1));
+                    tick = 9;
                     if (!minecraft.options.keyAttack.consumeClick()) isAutomaticAttack = true;
                     KeyBinding.click(minecraft.options.keyAttack.getKey());
                 }

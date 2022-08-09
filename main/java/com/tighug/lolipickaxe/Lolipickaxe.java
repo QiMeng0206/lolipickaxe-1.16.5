@@ -6,7 +6,7 @@ import com.tighug.lolipickaxe.client.LoliCardUtil;
 import com.tighug.lolipickaxe.client.event.LoliGUIEvent;
 import com.tighug.lolipickaxe.client.gui.LoliPickaxeCContainerScreen;
 import com.tighug.lolipickaxe.client.key.KeyLoader;
-import com.tighug.lolipickaxe.common.loot.modLootModifierSerializers;
+import com.tighug.lolipickaxe.common.loot.ModLootModifierSerializers;
 import com.tighug.lolipickaxe.enchantment.ModEnchantments;
 import com.tighug.lolipickaxe.event.LoliFlightEvent;
 import com.tighug.lolipickaxe.event.LoliPlayerEvent;
@@ -61,7 +61,7 @@ public class Lolipickaxe {
         ModItems.ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModContainerType.CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModEnchantments.ENCHANTMENTS.register(FMLJavaModLoadingContext.get().getModEventBus());
-        modLootModifierSerializers.LOOT_MODIFIER_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        ModLootModifierSerializers.LOOT_MODIFIER_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ModRecipeSerializers.RECIPE_SERIALIZERS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 
@@ -83,11 +83,11 @@ public class Lolipickaxe {
                 ClientRegistry.registerKeyBinding(KeyLoader.POTION_KEY);
                 ClientRegistry.registerKeyBinding(KeyLoader.RECOVER_KEY);
                 ScreenManager.register(lolipickaxeContainerType.get(), LoliPickaxeCContainerScreen::new);
+                for (Enchantment enchantment : Lists.newArrayList(ForgeRegistries.ENCHANTMENTS.getValues())){
+                    LoliGUIEvent.enchantment_id.add(enchantment.getDescriptionId());
+                }
+                LoliCardUtil.init();
             });
-            for (Enchantment enchantment : Lists.newArrayList(ForgeRegistries.ENCHANTMENTS.getValues())){
-                LoliGUIEvent.enchantment_id.add(enchantment.getDescriptionId());
-            }
-            LoliCardUtil.init();
         }
 
         @SubscribeEvent
@@ -95,31 +95,33 @@ public class Lolipickaxe {
             event.enqueueWork(() -> {
                 NetworkHandler.registerMessage();
                 Utils.EFFECTS.addAll(ForgeRegistries.POTIONS.getValues());
-                Class<RangedAttribute> attackDamage = RangedAttribute.class;
-                Field[] attackDamageField = attackDamage.getDeclaredFields();
-                Map<Double, Field> map = Maps.newHashMap();
-                for (Field field : attackDamageField) {
-                    if (field.getType() == double.class) {
+                if (Config.REVISE_ATTACK_DAMAGE_MAX_VALUE.get()) {
+                    Class<RangedAttribute> attackDamage = RangedAttribute.class;
+                    Field[] attackDamageField = attackDamage.getDeclaredFields();
+                    Map<Double, Field> map = Maps.newHashMap();
+                    for (Field field : attackDamageField) {
+                        if (field.getType() == double.class) {
+                            try {
+                                field.setAccessible(true);
+                                map.put(field.getDouble(Attributes.ATTACK_DAMAGE), field);
+                            } catch (IllegalAccessException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    }
+                    if (!map.isEmpty()) {
+                        double d = 0;
+                        for (double d1 : map.keySet()) {
+                            if (d1 > d) d = d1;
+                        }
                         try {
-                            field.setAccessible(true);
-                            map.put(field.getDouble(Attributes.ATTACK_DAMAGE), field);
+                            map.get(d).set(Attributes.ATTACK_DAMAGE, Float.MAX_VALUE);
                         } catch (IllegalAccessException e) {
                             throw new RuntimeException(e);
                         }
                     }
+                    map.values().forEach(field -> field.setAccessible(false));
                 }
-                if (!map.isEmpty()) {
-                    double d = 0;
-                    for (double d1 : map.keySet()) {
-                        if (d1 > d) d = d1;
-                    }
-                    try {
-                        map.get(d).set(Attributes.ATTACK_DAMAGE, Float.MAX_VALUE);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                }
-                map.values().forEach(field -> field.setAccessible(false));
             });
         }
 

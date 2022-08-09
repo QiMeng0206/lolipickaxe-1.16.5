@@ -242,7 +242,7 @@ public class NetworkHandler {
                             entitySet.addAll(list);
                         }
                         entitySet.removeIf(entity -> ItemLoliPickaxeTool.isWhitelist(entity, player) || !entity.isAttackable() || !entity.isAlive());
-                        for (Entity entity : entitySet) {
+                        for (net.minecraft.entity.Entity entity : entitySet) {
                             ItemSmallLoliPickaxe.attack(mainHandItem, player, entity);
                             player.attack(entity);
                         }

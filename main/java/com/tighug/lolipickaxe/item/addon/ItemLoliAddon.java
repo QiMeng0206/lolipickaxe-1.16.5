@@ -91,6 +91,8 @@ public class ItemLoliAddon extends Addon {
         return ItemStack.EMPTY;
     }
 
+
+
     public enum Type {
         STORAGE_CAPACITY(i -> {
             int i1 = 2;

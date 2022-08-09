@@ -23,10 +23,7 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.*;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -89,17 +86,34 @@ public class LoliPlayerEvent implements Lolipickaxe.LoliEvent {
             entity.getCapability(LoliPlayer.loliPlayer).ifPresent(iLoliPlayer -> iLoliPlayer.onPlayerHurt(event.getSource()));
             event.setCanceled(true);
         }
-        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource && event.isCanceled()) event.setCanceled(false);
+        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource) {
+            entity.getCapability(LoliPlayer.loliPlayer).ifPresent(iLoliPlayer -> iLoliPlayer.onPlayerHurt(event.getSource()));
+            event.setCanceled(false);
+        }
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public void onLivingDamageEvent(LivingDamageEvent event) {
+        LivingEntity entity = event.getEntityLiving();
+        if (entity instanceof ServerPlayerEntity && loliPlayer.contains(entity)) {
+            entity.getCapability(LoliPlayer.loliPlayer).ifPresent(iLoliPlayer -> iLoliPlayer.onPlayerHurt(event.getSource()));
+            event.setCanceled(true);
+        }
+        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource) {
+            event.setAmount(((LoliPlayer.LoliDamageSource) event.getSource()).getAmount());
+            event.setCanceled(false);
+        }
+    }
+
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void onLivingAttackEvent(LivingAttackEvent event) {
         LivingEntity entity = event.getEntityLiving();
         if (entity instanceof ServerPlayerEntity && loliPlayer.contains(entity)) {
             entity.getCapability(LoliPlayer.loliPlayer).ifPresent(iLoliPlayer -> iLoliPlayer.onPlayerHurt(event.getSource()));
             event.setCanceled(true);
         }
-        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource && event.isCanceled()) event.setCanceled(false);
+        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource) event.setCanceled(false);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
@@ -109,7 +123,7 @@ public class LoliPlayerEvent implements Lolipickaxe.LoliEvent {
             entity.getCapability(LoliPlayer.loliPlayer).ifPresent(iLoliPlayer -> iLoliPlayer.onPlayerHurt(event.getSource()));
             event.setCanceled(true);
         }
-        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource && event.isCanceled()) event.setCanceled(false);
+        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource) event.setCanceled(false);
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)

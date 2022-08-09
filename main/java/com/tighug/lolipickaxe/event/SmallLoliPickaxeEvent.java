@@ -4,6 +4,8 @@ import com.google.common.collect.Sets;
 import com.tighug.lolipickaxe.Lolipickaxe;
 import com.tighug.lolipickaxe.client.event.LoliPickaxeKeyEvent;
 import com.tighug.lolipickaxe.item.ModItems;
+import com.tighug.lolipickaxe.item.Tool.IContainer;
+import com.tighug.lolipickaxe.item.Tool.ItemLoliPickaxeTool;
 import com.tighug.lolipickaxe.item.Tool.ItemSmallLoliPickaxe;
 import com.tighug.lolipickaxe.item.addon.ItemLoliAddon;
 import com.tighug.lolipickaxe.network.NetworkHandler;
@@ -13,14 +15,21 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
+import net.minecraft.potion.EffectInstance;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntityDamageSource;
+import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingAttackEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -74,10 +83,13 @@ public class SmallLoliPickaxeEvent implements Lolipickaxe.LoliEvent {
                 float f = 1;
                 if (ItemSmallLoliPickaxe.hasLevel(ItemLoliAddon.Type.ATTACK_DAMAGE, itemStack)) f += ItemSmallLoliPickaxe.getValue(ItemLoliAddon.Type.ATTACK_DAMAGE, itemStack);
                 if (!entities.contains(entity)) {
-                    entity.hurt(((EntityDamageSource) DamageSource.playerAttack(player)).setThorns(), f);
+                    float finalF = f;
+                    LoliTickEvent.addTask(new LoliTickEvent.TickStartTask(0, () -> {
+                        entity.hurt(((EntityDamageSource) DamageSource.playerAttack(player)).setThorns(), finalF);
+                        player.setHealth(player.getHealth() + finalF / 2);
+                    }), TickEvent.Phase.START);
                     entities.add(entity);
                 }
-                player.setHealth(player.getHealth() + f / 2);
             }
         }
     }
@@ -90,6 +102,25 @@ public class SmallLoliPickaxeEvent implements Lolipickaxe.LoliEvent {
         if (++count > 10) {
             entities.clear();
             count = 0;
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void onLivingDeathEvent(LivingDeathEvent event) {
+        ServerPlayerEntity player = event.getEntityLiving() instanceof ServerPlayerEntity ? (ServerPlayerEntity) event.getEntityLiving() : null;
+        if (player != null && !(event.getSource() instanceof LoliPlayer.LoliDamageSource)) {
+            ItemStack itemStack = getItemSmallLoliPickaxe(ItemLoliAddon.Type.STORAGE_CAPACITY, player);
+            if (!itemStack.isEmpty()) {
+                IContainer container = (IContainer) itemStack.getItem();
+                if (!container.getInventory(itemStack).removeItemType(Items.TOTEM_OF_UNDYING, 1).isEmpty()) {
+                    event.setCanceled(true);
+                    player.setHealth(1);
+                    player.removeAllEffects();
+                    player.addEffect(new EffectInstance(Effects.FIRE_RESISTANCE, 800));
+                    player.addEffect(new EffectInstance(Effects.ABSORPTION, 100, 1));
+                    player.addEffect(new EffectInstance(Effects.REGENERATION, 900, 1));
+                }
+            }
         }
     }
 

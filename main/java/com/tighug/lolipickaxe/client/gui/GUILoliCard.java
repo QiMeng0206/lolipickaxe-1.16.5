@@ -45,9 +45,8 @@ public class GUILoliCard extends Screen {
 
     protected GUILoliCard(String nane) {
         super(StringTextComponent.EMPTY);
-        String s = nane;
-        bg = LoliCardUtil.getResourceLocation(s);
-        Pair<Integer, Integer> pair = LoliCardUtil.getSize(s);
+        bg = LoliCardUtil.getResourceLocation(nane);
+        Pair<Integer, Integer> pair = LoliCardUtil.getSize(nane);
         bgHeight = pair.getFirst();
         bgWidth = pair.getSecond();
         ratio = (double) bgWidth / (double) bgHeight;

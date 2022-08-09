@@ -3,7 +3,7 @@ package com.tighug.lolipickaxe.item.Tool;
 import com.google.common.collect.Sets;
 import com.tighug.lolipickaxe.inventory.LoliInventory;
 import com.tighug.lolipickaxe.inventory.LoliPickaxeContainer;
-import com.tighug.lolipickaxe.item.ModItemGroup;
+import com.tighug.lolipickaxe.item.LoliItem;
 import net.minecraft.entity.CreatureEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -15,14 +15,11 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUseContext;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ToolType;
 import net.minecraftforge.common.util.LazyOptional;
@@ -34,12 +31,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Set;
 
-public abstract class ItemLoliPickaxeTool extends Item implements IContainer, INamedContainerProvider {
-    public static final String LOLI_DESTROY_RANGE = "loliDestroyRange";
+public abstract class ItemLoliPickaxeTool extends LoliItem implements IContainer, INamedContainerProvider {
 
-    public ItemLoliPickaxeTool() {
-        super(new Properties());
-    }
+    public static final String LOLI_DESTROY_RANGE = "loliDestroyRange";
 
     public static boolean isWhitelist(Entity entity, @NotNull PlayerEntity player) {
         if (player.getLastHurtByMob() == entity || player.getLastHurtMob() == entity || (entity instanceof LivingEntity && ((LivingEntity) entity).getKillCredit() == player)) return false;
@@ -139,18 +133,6 @@ public abstract class ItemLoliPickaxeTool extends Item implements IContainer, IN
     @Override
     public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
         return false;
-    }
-
-    @Override
-    public int getItemStackLimit(ItemStack stack) {
-        return 1;
-    }
-
-    @Override
-    public void fillItemCategory(@NotNull ItemGroup p_150895_1_, @NotNull NonNullList<ItemStack> p_150895_2_) {
-        if (p_150895_1_ == ModItemGroup.ITEM_GROUP_LOLI) {
-            p_150895_2_.add(new ItemStack(this));
-        }
     }
 
     @Override

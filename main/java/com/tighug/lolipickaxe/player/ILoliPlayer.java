@@ -35,7 +35,7 @@ public interface ILoliPlayer extends INBTSerializable<CompoundNBT> {
 
     void openLoliConfig();
 
-    interface IAttackType <T extends ILoliPlayer> extends BiConsumer<Entity, T>{
+    interface IAttackType<T extends ILoliPlayer> extends BiConsumer<Entity, T>{
 
         void accept(Entity entity, T loliPlayer);
     }

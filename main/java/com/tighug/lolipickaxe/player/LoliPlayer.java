@@ -399,25 +399,25 @@ public class LoliPlayer implements ILoliPlayer {
                     setItemLoliPickaxe(itemStack);
                 }
                 if (isRemoved()) {
-                    player.getAttributes().getSyncableAttributes().forEach(modifiableAttributeInstance -> modifiableAttributeInstance.removeModifier(this.uuid));
                     entityData.setAccessible(true);
                     itemsById.setAccessible(true);
+                    dataHealthId.setAccessible(true);
                     try {
                         EntityDataManager entityDataManager = ((EntityDataManager) entityData.get(player));
                         Map<Integer, EntityDataManager.DataEntry<?>> map = ((Map<Integer, EntityDataManager.DataEntry<?>>) itemsById.get(entityDataManager));
-                        map.keySet().forEach(integer -> {
-                            EntityDataManager.DataEntry<?> dataEntry = map.get(integer);
-                            if (dataEntry instanceof LoliEntry) {
-                                map.put(integer, new EntityDataManager.DataEntry<>((DataParameter<Float>) dataEntry.getAccessor(), 20f));
-                            }
-                        });
-                    } catch (IllegalAccessException e) {
+                        DataParameter<Float> floatDataParameter = (DataParameter<Float>) dataHealthId.get(player);
+                        map.put(floatDataParameter.getId(), new EntityDataManager.DataEntry<>(floatDataParameter, Utils.clamp(player.getMaxHealth(), 1, Float.MAX_VALUE)));
+                    }
+                    catch (IllegalAccessException e) {
+                        dataHealthId.setAccessible(false);
                         entityData.setAccessible(false);
                         itemsById.setAccessible(false);
                         throw new RuntimeException(e);
                     }
+                    dataHealthId.setAccessible(false);
                     entityData.setAccessible(false);
                     itemsById.setAccessible(false);
+                    player.setHealth(Utils.clamp(player.getMaxHealth(), 1, Float.MAX_VALUE));
                 }
                 else {
                     refreshAttributeModifier();
@@ -503,13 +503,14 @@ public class LoliPlayer implements ILoliPlayer {
     }
 
     private enum DefaultAttackType implements AttackType {
-        hurt((Entity entity, LoliPlayer loliPlayer) -> {
+        hurt((Entity entity, com.tighug.lolipickaxe.player.LoliPlayer loliPlayer) -> {
             if (entity.isAlive()) {
-                DamageSource ds = new LoliDamageSource(loliPlayer.player);
+                LoliDamageSource ds = new LoliDamageSource(loliPlayer.player);
                 boolean b = (boolean) loliPlayer.loliConfig.getValue(LoliConfig.Type.DROP_ITEMS);
                 float f = ((Number) loliPlayer.loliConfig.getValue(LoliConfig.Type.ATTACK_DAMAGE)).floatValue();
                 int i = ((Number) loliPlayer.loliConfig.getValue(LoliConfig.Type.ATTACK_SPEED)).intValue();
                 if (entity instanceof PlayerEntity) {
+                    ds = LoliDamageSource.NullDamageSource;
                     PlayerEntity player1 = (PlayerEntity) entity;
                     if ((boolean) loliPlayer.loliConfig.getValue(LoliConfig.Type.CLEAR_INVENTORY)) {
                         player1.inventory.clearContent();
@@ -534,6 +535,7 @@ public class LoliPlayer implements ILoliPlayer {
                     ((List<ItemStack>) mobEntity.getArmorSlots()).clear();
                     ((List<ItemStack>) mobEntity.getHandSlots()).clear();
                 }
+                ds = ds.setAmount(f);
                 for (int i1 = 0 ; i1 < i && entity.isAlive(); ++i1){
                     entity.invulnerableTime = 0;
                     entity.hurt(ds, f);
@@ -620,7 +622,7 @@ public class LoliPlayer implements ILoliPlayer {
             else ((ServerWorld) loliPlayer.player.level).despawn(entity);
         }),
         @SuppressWarnings("deprecation")
-        removed((Entity entity, LoliPlayer loliPlayer) -> {
+        removed((Entity entity, com.tighug.lolipickaxe.player.LoliPlayer loliPlayer) -> {
             ServerWorld world = (ServerWorld) loliPlayer.player.level;
             if (entity instanceof ServerPlayerEntity) {
                 removedServerPlayer((ServerPlayerEntity) entity);
@@ -641,7 +643,7 @@ public class LoliPlayer implements ILoliPlayer {
         }
 
         @Override
-        public void accept(Entity entity, LoliPlayer loliPlayer) {
+        public void accept(Entity entity, com.tighug.lolipickaxe.player.LoliPlayer loliPlayer) {
             results.accept(entity, loliPlayer);
         }
 
@@ -714,10 +716,24 @@ public class LoliPlayer implements ILoliPlayer {
     }
 
     public static class LoliDamageSource extends EntityDamageSource {
-        public static LoliDamageSource NullDamageSource = new LoliDamageSource(null);
+        public final static LoliDamageSource NullDamageSource = new LoliDamageSource(null);
+        private float amount;
 
         public LoliDamageSource(@Nullable Entity p_i1567_2_) {
-            super("loli", p_i1567_2_);
+            this(p_i1567_2_, 0);
+        }
+
+        public LoliDamageSource(@Nullable Entity p, float f) {
+            super("loli", p);
+            amount = f;
+        }
+
+        public float getAmount() {
+            return amount;
+        }
+
+        public LoliDamageSource setAmount(float f) {
+            return new LoliDamageSource(this.getEntity(), f);
         }
 
         @Override
@@ -744,8 +760,9 @@ public class LoliPlayer implements ILoliPlayer {
     }
 
     private static class LoliEntry extends EntityDataManager.DataEntry<Float> {
+
         public LoliEntry(DataParameter<Float> p_i47010_1_) {
-            super(p_i47010_1_, Float.POSITIVE_INFINITY);
+            super(p_i47010_1_, 20f);
         }
 
         @Override
@@ -774,4 +791,5 @@ public class LoliPlayer implements ILoliPlayer {
         }
 
     }
+
 }

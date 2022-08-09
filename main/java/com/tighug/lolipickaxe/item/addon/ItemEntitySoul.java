@@ -43,7 +43,7 @@ public class ItemEntitySoul extends Addon {
             for (byte b = 0; b < 9; ++b) {
                 itemEntitySouls.add((ItemEntitySoul) new ItemEntitySoul(b).setRegistryName(MODID, "loli_entity_soul_addon_" + b));
             }
-            itemEntitySouls.add(new SoulEnd());
+            itemEntitySouls.add(new ItemEntitySoul.SoulEnd());
         }
     }
 
