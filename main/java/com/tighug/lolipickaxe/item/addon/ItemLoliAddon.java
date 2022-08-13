@@ -95,39 +95,23 @@ public class ItemLoliAddon extends Addon {
 
     public enum Type {
         STORAGE_CAPACITY(i -> {
-            int i1 = 2;
-            for (int j = 0 ; j < i; ++j){
-                i1 = i1 * 2;
-            }
-            return Double.valueOf(i1);
+            return Double.valueOf(2 << i);
         }, 4, "storageCapacity"),
         THORNS(i -> (Math.random() + ((double) i + 1) / 10), 9, "thorns"),
         DEFENSE(i -> (Math.random() + ((double) i + 1) / 10), 9, "defense"),
         ATTACK_DAMAGE(i -> {
             float i2 = 1;
-            int i3 = 1;
-            for (int j = 0; j < i; ++j){
-                i3 = i3 * 2;
-            }
-            for (int j = 0; j < i3; ++j){
+            for (int j = 0; j < 1 << i; ++j){
                 i2 = i2 * 2;
             }
             return Double.valueOf(Math.min(4 + i2, Float.MAX_VALUE));
         }, 6, "attackDamage"),
         ATTACK_RANGE(i -> Double.valueOf(3 + i * 5), 2, "attackRange"),
         ATTACK_SPEED(i -> {
-            int i1 = 2;
-            for (int j = 0; j < i; ++j){
-                i1 = i1 * 2;
-            }
-            return Double.valueOf(i1);
+            return Double.valueOf(2 << i);
         }, 3, "attackSpeed"),
         FORTUNE(i -> {
-            int i1 = 1;
-            for (int j = 0; j < i; ++j){
-                i1 = i1 * 2;
-            }
-            return Double.valueOf(i1);
+            return Double.valueOf(1 << i);
         }, 5, "fortune"),
         EFFECT(i -> Double.valueOf(i), 2, "effect"),
         HARVEST_LEVEL(i -> {
@@ -143,11 +127,7 @@ public class ItemLoliAddon extends Addon {
         }, 5, "harvestLevel"),
         DESTROY_RANGE(i -> Double.valueOf(i + 1), 4, ItemLoliPickaxeTool.LOLI_DESTROY_RANGE),
         DESTROY_SPEED(i -> {
-            int i1 = 2;
-            for (int i2 = 0; i2 < i + 1; ++i2){
-                i1 = i1 * 2;
-            }
-            return Double.valueOf(i1);
+            return Double.valueOf(4 << i);
         }, 9, "destroySpeed"),
         AUTO_FURNACE(i -> Double.valueOf(i), 0, "autoFurnace"),
         MAYFLY(i -> Double.valueOf(i), 0, "mayfly");
