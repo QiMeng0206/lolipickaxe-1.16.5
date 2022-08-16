@@ -24,7 +24,7 @@
   "gui.loliPickaxe.config.loliPickaxeAutoAttackRange": "自动攻击范围",
   "gui.loliPickaxe.config.loliPickaxeFlyingSpeed": "飞行速度倍率",
   "gui.loliPickaxe.config.loliPickaxeKillFacing": "左键范围攻击",
-  "gui.loliPickaxe.config.removedEntity": "强制清除实体",
+  "gui.loliPickaxe.config.removedEntity": "§c强制清除实体",
   "gui.loliPickaxe.config.thorns": "反伤",
   "gui.loliPickaxe.config.validToAmityEntity": "范围攻击对非怪物有效",
   "gui.loliPickaxe.config.loliPickaxeReachDistance": "玩家触及半径",
@@ -43,6 +43,7 @@
   "item.optionalLoliCard.name": "自选萝莉卡片",
   "item.loliCardAlbum.name": "萝莉卡片册",
   "item.lolipickaxe.loli_record": "萝莉唱片",
+  "item.lolipickaxe.testify_record": "Testify",
 
   "item.loli_nether_star_addon.name": "储存容量升级",
   "item.loli_obsidian_addon.name": "勇气之雾升级",
@@ -63,6 +64,7 @@
   "item.loliMaterial.recipe": "九个合成一个该物品的升级",
   "item.loliEntitySoulAddon.end.recipe": "和满级普通萝莉合成为氪金萝莉",
   "item.lolipickaxe.loli_record.desc": "ばか変態煩い(av6752335)",
+  "item.lolipickaxe.testify_record.desc": "\"Testify\" - 【Arcaea】 / void (Mournfinale) feat. 星熊南巫",
 
   "item.LoliCard.all": "所有",
   "item.LoliCard.default_loli_card_0": "默认图片",
@@ -98,7 +100,7 @@
   "loliPickaxe.killFacing": "范围攻击",
   "loliPickaxe.killRange": "潜行右键范围攻击",
   "loliPickaxe.range": "采掘范围更改为",
-  "loliPickaxe.removedEntity": "强制清除实体",
+  "loliPickaxe.removedEntity": "§c强制清除实体",
   "loliPickaxe.thorns": "反伤",
   "loliPickaxe.validToAllEntity": "实体杀手",
   "loliPickaxe.validToAmityEntity": "友军杀手",
