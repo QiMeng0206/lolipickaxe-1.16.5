@@ -25,8 +25,25 @@ public class LoliConfig {
         isDefault = true;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) return true;
+        else if (obj instanceof LoliConfig) {
+            LoliConfig loliConfig = (LoliConfig) obj;
+            for (Type type : Type.values()) {
+                if (!loliConfig.getValue(type).equals(this.getValue(type))) return false;
+            }
+            return true;
+        }
+        return false;
+    }
+
     private LoliConfig(CompoundNBT nbt) {
         for (Type v : Type.values()) {
+            if (!nbt.contains(v.getName())) {
+                setForDefault(v);
+                continue;
+            }
             if (Boolean.class == v.getValue()) {
                 setValue(v, nbt.getBoolean(v.getName()));
             }

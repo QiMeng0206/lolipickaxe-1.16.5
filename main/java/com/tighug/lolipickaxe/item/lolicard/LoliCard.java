@@ -85,22 +85,6 @@ public class LoliCard extends LoliItem {
         }
 
         @Override
-        public void onCraftedBy(@NotNull ItemStack p_77622_1_, @NotNull World p_77622_2_, @NotNull PlayerEntity p_77622_3_) {
-            if (p_77622_3_ instanceof FakePlayer) return;
-            boolean b = true;
-            ItemStack itemStack = this.getDefaultInstance();
-            PlayerInventory inventory = p_77622_3_.inventory;
-            for (int i = 0; i < 8; ++i) {
-                if (b) {
-                    b = inventory.add(itemStack.copy());
-                }
-                if (!b) {
-                    p_77622_3_.drop(itemStack.copy(), false);
-                }
-            }
-        }
-
-        @Override
         public @NotNull ActionResult<ItemStack> use(@NotNull World world, @NotNull PlayerEntity player, @NotNull Hand hand) {
             ItemStack itemStack = player.getItemInHand(hand);
             if (world.isClientSide() && hand == Hand.MAIN_HAND) {

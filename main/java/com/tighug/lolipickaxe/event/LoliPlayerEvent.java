@@ -123,7 +123,10 @@ public class LoliPlayerEvent implements Lolipickaxe.LoliEvent {
             entity.getCapability(LoliPlayer.loliPlayer).ifPresent(iLoliPlayer -> iLoliPlayer.onPlayerHurt(event.getSource()));
             event.setCanceled(true);
         }
-        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource) event.setCanceled(false);
+        else if (event.getSource() instanceof LoliPlayer.LoliDamageSource) {
+            event.setCanceled(false);
+            entity.setHealth(0);
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)

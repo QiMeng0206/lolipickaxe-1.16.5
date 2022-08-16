@@ -1,12 +1,17 @@
 package com.tighug.lolipickaxe.recipe;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.tighug.lolipickaxe.item.ModItems;
 import com.tighug.lolipickaxe.item.Tool.ItemSmallLoliPickaxe;
 import com.tighug.lolipickaxe.item.addon.Addon;
 import com.tighug.lolipickaxe.item.addon.ItemEntitySoul;
 import com.tighug.lolipickaxe.item.addon.ItemLoliAddon;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.item.EnchantedBookItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
@@ -15,9 +20,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class LoliRecipe extends SpecialRecipe {
+    private static final Set<EnchantmentType> ENCHANTMENT_TYPES = Sets.newHashSet(EnchantmentType.WEAPON, EnchantmentType.DIGGER);
     public LoliRecipe(ResourceLocation p_i48169_1_) {
         super(p_i48169_1_);
     }
@@ -35,6 +44,7 @@ public class LoliRecipe extends SpecialRecipe {
     public @NotNull ItemStack assemble(@NotNull CraftingInventory p_77572_1_) {
         ItemStack loli = ItemStack.EMPTY;
         List<ItemStack> list = Lists.newArrayList();
+        List<ItemStack> list1 = Lists.newArrayList();
         for (int i = 0; i < p_77572_1_.getContainerSize(); ++i){
             ItemStack itemstack1 = p_77572_1_.getItem(i);
             if (!itemstack1.isEmpty()){
@@ -44,6 +54,9 @@ public class LoliRecipe extends SpecialRecipe {
                 }
                 else if (itemstack1.getItem() instanceof ItemLoliAddon || itemstack1.getItem() instanceof ItemEntitySoul.SoulEnd){
                     list.add(itemstack1.copy());
+                }
+                else if (itemstack1.getItem() instanceof EnchantedBookItem) {
+                    list1.add(itemstack1.copy());
                 }
                 else return ItemStack.EMPTY;
             }
@@ -76,6 +89,17 @@ public class LoliRecipe extends SpecialRecipe {
                     if (!value.hasLevel(loli) || value.getLevel(loli) != i - 1) return ItemStack.EMPTY;
                     else {
                         nbt.putInt(value.getName(), i);
+                    }
+                }
+            }
+        }
+        if (!list1.isEmpty()) {
+            for (ItemStack itemStack : list1) {
+                Map<Enchantment, Integer> map = EnchantmentHelper.getEnchantments(itemStack);
+                for (Enchantment enchantment : map.keySet()) {
+                    Collection<Enchantment> enchantments = EnchantmentHelper.getEnchantments(loli).keySet();
+                    if (EnchantmentHelper.isEnchantmentCompatible(enchantments, enchantment) && ENCHANTMENT_TYPES.contains(enchantment.category)) {
+                        loli.enchant(enchantment, map.get(enchantment));
                     }
                 }
             }

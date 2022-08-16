@@ -105,6 +105,13 @@ public class GUILoliCard extends Screen {
         return super.keyPressed(p_231046_1_, p_231046_2_, p_231046_3_);
     }
 
+    @Override
+    protected void init() {
+        super.init();
+        lastMouseX = width / 2d;
+        lastMouseY = height / 2d;
+    }
+
     protected void renderBg(@Nonnull MatrixStack p_230450_1_) {
         assert this.minecraft != null;
         this.minecraft.getTextureManager().bind(bg);

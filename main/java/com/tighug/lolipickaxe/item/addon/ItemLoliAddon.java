@@ -14,6 +14,7 @@ import net.minecraft.util.text.TranslationTextComponent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigInteger;
 import java.util.List;
 import java.util.function.Function;
 
@@ -100,11 +101,8 @@ public class ItemLoliAddon extends Addon {
         THORNS(i -> (Math.random() + ((double) i + 1) / 10), 9, "thorns"),
         DEFENSE(i -> (Math.random() + ((double) i + 1) / 10), 9, "defense"),
         ATTACK_DAMAGE(i -> {
-            float i2 = 1;
-            for (int j = 0; j < 1 << i; ++j){
-                i2 = i2 * 2;
-            }
-            return Double.valueOf(Math.min(4 + i2, Float.MAX_VALUE));
+            BigInteger bigInteger = new BigInteger("1");
+            return bigInteger.shiftLeft(1 << i).doubleValue() + 4;
         }, 6, "attackDamage"),
         ATTACK_RANGE(i -> Double.valueOf(3 + i * 5), 2, "attackRange"),
         ATTACK_SPEED(i -> {

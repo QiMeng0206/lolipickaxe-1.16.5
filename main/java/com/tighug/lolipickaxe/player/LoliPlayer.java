@@ -258,6 +258,7 @@ public class LoliPlayer implements ILoliPlayer {
     @Override
     public void onPlayerHurt(@NotNull DamageSource damageSource) {
         if (!isLoli()) return;
+        extracted();
         if (!((boolean) loliConfig.getValue(LoliConfig.Type.THORNS))) return;
         Entity entity = damageSource.getEntity();
         if (!(isLoli(entity) || !(entity instanceof LivingEntity) || entity instanceof FakePlayer)){
@@ -272,28 +273,7 @@ public class LoliPlayer implements ILoliPlayer {
     public void onPlayerUpdate() {
         if (!isLoli()) return;
         onPlayerUpdate.forEach(iOnPlayer -> iOnPlayer.accept(player));
-        if (player.isDeadOrDying()) aBoolean = false;
-        if (!aBoolean) {
-            aBoolean = true;
-            entityData.setAccessible(true);
-            itemsById.setAccessible(true);
-            dataHealthId.setAccessible(true);
-            try {
-                EntityDataManager entityDataManager = ((EntityDataManager) entityData.get(player));
-                Map<Integer, EntityDataManager.DataEntry<?>> map = ((Map<Integer, EntityDataManager.DataEntry<?>>) itemsById.get(entityDataManager));
-                DataParameter<Float> floatDataParameter = (DataParameter<Float>) dataHealthId.get(player);
-                map.put(floatDataParameter.getId(), new LoliEntry(floatDataParameter));
-            }
-            catch (IllegalAccessException e) {
-                dataHealthId.setAccessible(false);
-                entityData.setAccessible(false);
-                itemsById.setAccessible(false);
-                throw new RuntimeException(e);
-            }
-            dataHealthId.setAccessible(false);
-            entityData.setAccessible(false);
-            itemsById.setAccessible(false);
-        }
+        extracted();
         player.deathTime = 0;
         for (Effect effect : effectBlacklist) {
             if (player.hasEffect(effect)) {
@@ -313,6 +293,30 @@ public class LoliPlayer implements ILoliPlayer {
         }
         if (player.level.getDayTime() % 200 == 0) {
             refreshAttributeModifier();
+        }
+    }
+
+    private void extracted() {
+        if (player.isDeadOrDying()) aBoolean = false;
+        if (!aBoolean) {
+            aBoolean = true;
+            entityData.setAccessible(true);
+            itemsById.setAccessible(true);
+            dataHealthId.setAccessible(true);
+            try {
+                EntityDataManager entityDataManager = ((EntityDataManager) entityData.get(player));
+                Map<Integer, EntityDataManager.DataEntry<?>> map = ((Map<Integer, EntityDataManager.DataEntry<?>>) itemsById.get(entityDataManager));
+                DataParameter<Float> floatDataParameter = (DataParameter<Float>) dataHealthId.get(player);
+                map.put(floatDataParameter.getId(), new LoliEntry(floatDataParameter));
+            }
+            catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            finally {
+                dataHealthId.setAccessible(false);
+                entityData.setAccessible(false);
+                itemsById.setAccessible(false);
+            }
         }
     }
 
@@ -409,14 +413,13 @@ public class LoliPlayer implements ILoliPlayer {
                         map.put(floatDataParameter.getId(), new EntityDataManager.DataEntry<>(floatDataParameter, Utils.clamp(player.getMaxHealth(), 1, Float.MAX_VALUE)));
                     }
                     catch (IllegalAccessException e) {
+                        throw new RuntimeException(e);
+                    }
+                    finally {
                         dataHealthId.setAccessible(false);
                         entityData.setAccessible(false);
                         itemsById.setAccessible(false);
-                        throw new RuntimeException(e);
                     }
-                    dataHealthId.setAccessible(false);
-                    entityData.setAccessible(false);
-                    itemsById.setAccessible(false);
                     player.setHealth(Utils.clamp(player.getMaxHealth(), 1, Float.MAX_VALUE));
                 }
                 else {
@@ -576,14 +579,13 @@ public class LoliPlayer implements ILoliPlayer {
                     map.put(floatDataParameter.getId(), new KillEntry(floatDataParameter));
                 }
                 catch (IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+                finally {
                     dataHealthId.setAccessible(false);
                     entityData.setAccessible(false);
                     itemsById.setAccessible(false);
-                    throw new RuntimeException(e);
                 }
-                dataHealthId.setAccessible(false);
-                entityData.setAccessible(false);
-                itemsById.setAccessible(false);
                 player1.die(LoliDamageSource.NullDamageSource);
                 if (Config.ALLOWABLE_KICK_PLAYER.get() && (boolean) loliPlayer.loliConfig.getValue(LoliConfig.Type.KICK_PLAYER)) {
                     ((ServerPlayerEntity) player1).connection.disconnect(new StringTextComponent((String) loliPlayer.loliConfig.getValue(LoliConfig.Type.KICK_PLAYER_MESSAGE)));
@@ -600,20 +602,22 @@ public class LoliPlayer implements ILoliPlayer {
                 try {
                     EntityDataManager entityDataManager = ((EntityDataManager) entityData.get(livingEntity));
                     Map<Integer, EntityDataManager.DataEntry<?>> map = ((Map<Integer, EntityDataManager.DataEntry<?>>) itemsById.get(entityDataManager));
-                    map.keySet().forEach(integer -> {
-                        EntityDataManager.DataEntry<?> dataEntry = map.get(integer);
-                        if (dataEntry.getValue().getClass() == Float.class && ((Float) dataEntry.getValue()) == livingEntity.getHealth()) {
-                            map.put(integer, new KillEntry((DataParameter<Float>) dataEntry.getAccessor()));
+                    DataParameter<Float> floatDataParameter = (DataParameter<Float>) dataHealthId.get(player1);
+                    for (int i : map.keySet()) {
+                        if (i == floatDataParameter.getId()) map.put(i, new KillEntry(floatDataParameter));
+                        else if (map.get(i).getValue() instanceof Float) {
+                            Float number = (Float) map.get(i).getValue();
+                            if (number == ((LivingEntity) entity).getMaxHealth()) map.put(i, new KillEntry(floatDataParameter));
                         }
-                    });
+                    }
                 }
                 catch (IllegalAccessException e) {
-                    entityData.setAccessible(false);
-                    itemsById.setAccessible(false);
                     throw new RuntimeException(e);
                 }
-                entityData.setAccessible(false);
-                itemsById.setAccessible(false);
+                finally {
+                    entityData.setAccessible(false);
+                    itemsById.setAccessible(false);
+                }
                 Class<? extends LivingEntity> clazz = livingEntity.getClass();
                 LOLI_PLAYER_EVENT.classes.add(clazz);
                 livingEntity.die(ds);
@@ -655,21 +659,23 @@ public class LoliPlayer implements ILoliPlayer {
         if (!sb.toString().equals(Utils.forge_package_name) && !sb.toString().equals(Utils.minecraft_package_name) && !sb.toString().equals(Utils.package_name)) {
             listeners.setAccessible(true);
             try {
-                        ((ConcurrentHashMap<?, ?>) listeners.get(MinecraftForge.EVENT_BUS))
-                                .keySet()
-                                .stream()
-                                .filter(o -> {
-                                    if (Lolipickaxe.LoliEvent.isLoliEvent(o)) return false;
-                                    if (o.getClass() == Class.class) {
-                                        return ((Class<?>) o).getName().contains(sb.toString());
-                                    }
-                                    return o.getClass().getName().contains(sb.toString());
-                                })
-                                .forEach(MinecraftForge.EVENT_BUS::unregister);
-                    } catch (IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-            listeners.setAccessible(false);
+                ((ConcurrentHashMap<?, ?>) listeners.get(MinecraftForge.EVENT_BUS))
+                        .keySet()
+                        .stream()
+                        .filter(o -> {
+                            if (Lolipickaxe.LoliEvent.isLoliEvent(o)) return false;
+                            if (o.getClass() == Class.class) {
+                                return ((Class<?>) o).getName().contains(sb.toString());
+                            }
+                            return o.getClass().getName().contains(sb.toString());
+                        })
+                        .forEach(MinecraftForge.EVENT_BUS::unregister);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+            finally {
+                listeners.setAccessible(false);
+            }
         }
     }
 
@@ -697,12 +703,11 @@ public class LoliPlayer implements ILoliPlayer {
                                 }
                                 field1.set(obj, new ICapabilityProvider[0]);
                             }
-                            field1.setAccessible(false);
-                            field.setAccessible(false);
                         } catch (IllegalAccessException e) {
+                            throw new RuntimeException(e);
+                        } finally {
                             field1.setAccessible(false);
                             field.setAccessible(false);
-                            throw new RuntimeException(e);
                         }
                     }
                 }
@@ -717,7 +722,7 @@ public class LoliPlayer implements ILoliPlayer {
 
     public static class LoliDamageSource extends EntityDamageSource {
         public final static LoliDamageSource NullDamageSource = new LoliDamageSource(null);
-        private float amount;
+        private final float amount;
 
         public LoliDamageSource(@Nullable Entity p_i1567_2_) {
             this(p_i1567_2_, 0);

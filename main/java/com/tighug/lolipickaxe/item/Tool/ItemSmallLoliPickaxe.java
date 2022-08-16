@@ -1,6 +1,7 @@
 package com.tighug.lolipickaxe.item.Tool;
 
 import com.google.common.collect.*;
+import com.mojang.datafixers.util.Pair;
 import com.tighug.lolipickaxe.Lolipickaxe;
 import com.tighug.lolipickaxe.client.event.LoliPickaxeKeyEvent;
 import com.tighug.lolipickaxe.enchantment.ModEnchantments;
@@ -14,8 +15,10 @@ import net.minecraft.block.Blocks;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
+import net.minecraft.enchantment.LootBonusEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.Attribute;
@@ -44,6 +47,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ToolType;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -185,8 +189,16 @@ public class ItemSmallLoliPickaxe extends ItemLoliPickaxeTool {
     @Override
     public void onCraftedBy(@NotNull ItemStack p_77622_1_, @NotNull World p_77622_2_, @NotNull PlayerEntity p_77622_3_) {
         boolean b = EnchantmentHelper.getItemEnchantmentLevel(ModEnchantments.AUTO_FURNACE.get(), p_77622_1_) == 0;
+        List<Pair<Enchantment, Integer>> pairList = Lists.newArrayList();
+        ForgeRegistries.ENCHANTMENTS.getValues().stream()
+                .filter(enchantment -> !(enchantment instanceof ModEnchantments.autoFurnace || enchantment.isCurse() || enchantment instanceof LootBonusEnchantment))
+                .forEach(enchantment -> {
+                            int i = EnchantmentHelper.getItemEnchantmentLevel(enchantment, p_77622_1_);
+                            if (i > 0) pairList.add(Pair.of(enchantment, i));
+                        });
         p_77622_1_.getOrCreateTag().remove("Enchantments");
         p_77622_1_.getOrCreateTag().remove("AttributeModifiers");
+        pairList.forEach(pair -> p_77622_1_.enchant(pair.getFirst(), pair.getSecond()));
         if (hasLevel(ItemLoliAddon.Type.FORTUNE, p_77622_1_)) {
             enchant(p_77622_1_, (int) getValue(ItemLoliAddon.Type.FORTUNE, p_77622_1_));
         }
@@ -250,13 +262,15 @@ public class ItemSmallLoliPickaxe extends ItemLoliPickaxeTool {
                             list.add(pos.offset(i, 0, k));
                         }
                     }
-                } else if (face == Direction.NORTH || face == Direction.SOUTH) {
+                }
+                else if (face == Direction.NORTH || face == Direction.SOUTH) {
                     for (i = -range; i <= range; i++) {
                         for (j = -range; j <= range; j++) {
                             list.add(pos.offset(i, j, 0));
                         }
                     }
-                } else {
+                }
+                else {
                     for (j = -range; j <= range; j++) {
                         for (k = -range; k <= range; k++) {
                             list.add(pos.offset(0, j, k));
@@ -265,8 +279,10 @@ public class ItemSmallLoliPickaxe extends ItemLoliPickaxeTool {
                 }
                 list.remove(pos);
                 if (player.isCreative()) list.removeIf(pos1 -> world.getBlockState(pos1).is(Blocks.AIR));
-                else
-                    list.removeIf(pos1 -> world.getBlockState(pos1).is(Blocks.AIR) || !this.canHarvestBlock(itemstack, world.getBlockState(pos1)));
+                else list.removeIf(pos1 -> {
+                        BlockState blockState = world.getBlockState(pos1);
+                        return blockState.is(Blocks.AIR) || !(this.canHarvestBlock(itemstack, blockState) && blockState.getDestroySpeed(world, pos1) >= 0);
+                    });
                 CompoundNBT nbt = new CompoundNBT();
                 List<Long> longs = Lists.newArrayList();
                 for (BlockPos pos1 : list) {
@@ -279,10 +295,9 @@ public class ItemSmallLoliPickaxe extends ItemLoliPickaxeTool {
         return false;
     }
 
-    @SuppressWarnings("ConstantConditions")
     @Override
     public boolean canHarvestBlock(ItemStack stack, BlockState state) {
-        return state.getHarvestLevel() <= this.getHarvestLevel(stack) && state.getDestroySpeed(null, null) >= 0;
+        return state.getHarvestLevel() <= this.getHarvestLevel(stack);
     }
 
     @Override
@@ -332,6 +347,8 @@ public class ItemSmallLoliPickaxe extends ItemLoliPickaxeTool {
         if (!player.level.isClientSide() && entity instanceof LivingEntity) {
             double d = ((double) getLevel(ItemLoliAddon.Type.ATTACK_DAMAGE, stack) + 1) / 10;
             if (d > 0) {
+                float maxHealth = ((LivingEntity) entity).getMaxHealth();
+                float f = Utils.clamp(((LivingEntity) entity).getHealth() / maxHealth, 0, 1);
                 LivingEntity livingEntity = (LivingEntity) entity;
                 double i = livingEntity.invulnerableTime;
                 livingEntity.invulnerableTime = (int) (i * (1 - d));
@@ -340,6 +357,9 @@ public class ItemSmallLoliPickaxe extends ItemLoliPickaxeTool {
                 multimap.put(Attributes.ARMOR_TOUGHNESS, new AttributeModifier(ATTRIBUTE_MODIFIER_UUID, "loli", -d, AttributeModifier.Operation.MULTIPLY_TOTAL));
                 multimap.put(Attributes.MAX_HEALTH, new AttributeModifier(ATTRIBUTE_MODIFIER_UUID, "loli", -d, AttributeModifier.Operation.MULTIPLY_TOTAL));
                 livingEntity.getAttributes().addTransientAttributeModifiers(multimap);
+                if (((LivingEntity) entity).getMaxHealth() != maxHealth) {
+                    ((LivingEntity) entity).setHealth(((LivingEntity) entity).getMaxHealth() * f);
+                }
             }
         }
     }

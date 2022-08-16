@@ -1,16 +1,17 @@
 package com.tighug.lolipickaxe.item;
 
-import com.tighug.lolipickaxe.util.ModSoundEvents;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MusicDiscItem;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.SoundEvent;
+import net.minecraftforge.fml.RegistryObject;
 import org.jetbrains.annotations.NotNull;
 
 public class LoliRecord extends MusicDiscItem {
 
-    public LoliRecord() {
-        super(15, ModSoundEvents.lolirecord, new Properties());
+    public LoliRecord(RegistryObject<SoundEvent> lolirecord) {
+        super(15, lolirecord, new Properties());
     }
 
     @Override

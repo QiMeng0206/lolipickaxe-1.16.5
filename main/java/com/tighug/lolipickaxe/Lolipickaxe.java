@@ -118,9 +118,10 @@ public class Lolipickaxe {
                             map.get(d).set(Attributes.ATTACK_DAMAGE, Float.MAX_VALUE);
                         } catch (IllegalAccessException e) {
                             throw new RuntimeException(e);
+                        } finally {
+                            map.values().forEach(field -> field.setAccessible(false));
                         }
                     }
-                    map.values().forEach(field -> field.setAccessible(false));
                 }
             });
         }

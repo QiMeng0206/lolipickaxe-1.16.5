@@ -25,8 +25,10 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.GuiContainerEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +47,7 @@ public class LoliGUIEvent implements Lolipickaxe.LoliEvent {
 
     @SuppressWarnings("rawtypes")
     @SubscribeEvent
-    public static void onDrawForeground(GuiContainerEvent.DrawForeground event){
+    public static void onDrawForeground(GuiContainerEvent.@NotNull DrawForeground event){
         ContainerScreen guiContainer = event.getGuiContainer();
         Minecraft minecraft = event.getGuiContainer().getMinecraft();
         if (guiContainer instanceof CreativeScreen) return;
@@ -62,7 +64,7 @@ public class LoliGUIEvent implements Lolipickaxe.LoliEvent {
     }
 
     @SubscribeEvent
-    public static void onLoliPickaxeTooltip(ItemTooltipEvent event) {
+    public static void onLoliPickaxeTooltip(@NotNull ItemTooltipEvent event) {
         ItemStack itemStack = event.getItemStack();
         if (itemStack.isEmpty()) return;
         List<ITextComponent> toolTip = event.getToolTip();
@@ -154,5 +156,12 @@ public class LoliGUIEvent implements Lolipickaxe.LoliEvent {
             }
         }
 
+    }
+
+    @SubscribeEvent
+    public static void onPlayerOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getPlayer().equals(Minecraft.getInstance().player)) {
+            TAG.clear();
+        }
     }
 }
