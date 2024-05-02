@@ -1,7 +1,7 @@
 # lolipickaxe-1.16.5
 適用於`MinecraftForge1.16.5-36.2.39--1.16.5-36.2.42`的Lolipickaxe-1.16.5
 
-英文:[English](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/README.md)簡體中文:[简体中文](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/README.md)繁體中文:本頁面
+英文:[English](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/README.md) 簡體中文:[简体中文](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/README.md) 繁體中文:本頁面
 
 本倉庫fork自https://github.com/gjdbg148525/lolipickaxe (原倉庫已停止維護)
 
