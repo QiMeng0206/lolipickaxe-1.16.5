@@ -11,5 +11,14 @@
 				"volume": 0.05
 			}
 		]
+	},
+	"testify" : {
+		"sounds" : [
+			{
+				"name": "lolipickaxe:testify",
+				"stream": true,
+				"volume": 0.07
+			}
+		]
 	}
 }
