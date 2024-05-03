@@ -1,7 +1,7 @@
 # lolipickaxe-1.16.5
 For `MinecraftForge1.16.5-36.2.39--1.16.5-36.2.42`
 
-English: [English](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/README.md)  Simplified Chinese: [Simplified Chinese](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/readme-zh_CN.md)  Traditional Chinese: [Traditional Chinese](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/readme-zh_TW.md)
+English: this page  Simplified Chinese: [Simplified Chinese](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/readme-zh_CN.md)  Traditional Chinese: [Traditional Chinese](https://github.com/QiMeng0206/lolipickaxe-1.16.5/blob/main/readme-zh_TW.md)
 
 This repository is forked from https://github.com/gjdbg148525/lolipickaxe (the original repository is no longer maintained)
 
